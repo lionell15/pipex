@@ -1,6 +1,6 @@
 #include "pipex.h"
 
-static void	ft_child(char **argv, char **envp, int *fd)
+static void	spawn_child(char **argv, char **envp, int *fd)
 {
 	int	filein;
 
@@ -13,7 +13,7 @@ static void	ft_child(char **argv, char **envp, int *fd)
 	execute(argv[2], envp);
 }
 
-static void	ft_parent(char **argv, char **envp, int *fd)
+static void	ret_parent(char **argv, char **envp, int *fd)
 {
 	int	fileout;
 
@@ -39,9 +39,9 @@ int	main(int argc, char **argv, char **envp)
 		if (pid == -1)
 			return (0);
 		if (pid == 0)
-			ft_child(argv, envp, fd);
+			spawn_child(argv, envp, fd);
 		waitpid(pid, NULL, 0);
-		ft_parent(argv, envp, fd);
+		ret_parent(argv, envp, fd);
 	}
 	return (0);
 }

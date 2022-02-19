@@ -1,4 +1,4 @@
-PROG	=	pipex
+NAME	=	pipex
 SRCS	=	pipex.c utils.c
 OBJS	=	${SRCS:.c=.o}
 HEADER	=	-Iincludes
@@ -8,18 +8,18 @@ CFLAGS	=	-Wall -Wextra -Werror -g
 .c.o:		%.o : %.c
 					@gcc ${CFLAGS} ${HEADER} -c $< -o $(<:.c=.o)
 
-all: 		${PROG}
+all: 		${NAME}
 
-${PROG}:	${OBJS}
+${NAME}:	${OBJS}
 					@make re -C ./libft
-					@$(CC) ${OBJS} -Llibft -lft -o ${PROG}
+					@$(CC) ${OBJS} -Llibft -lft -o ${NAME}
 clean:
 					@make clean -C ./libft
 					@rm -f ${OBJS} ${OBJS_B}
 
 fclean: 	clean
 					@make fclean -C ./libft
-					@rm -f ${PROG}
+					@rm -f ${NAME}
 
 re:			fclean all
 
