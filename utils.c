@@ -46,5 +46,5 @@ void	execute(char *argv, char **envp)
 		return ;
 	}
 	if (execve(path, cmd, envp) == -1)
-		return ;
+		write(1, "Error!", 6);
 }

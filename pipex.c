@@ -6,7 +6,7 @@ static void	spawn_child(char **argv, char **envp, int *fd)
 
 	filein = open(argv[1], O_RDONLY, 0777);
 	if (filein == -1)
-		return ;
+		write(1,"(null)",6) ;
 	dup2(fd[1], 1);
 	dup2(filein, 0);
 	close(fd[0]);
@@ -19,7 +19,7 @@ static void	ret_parent(char **argv, char **envp, int *fd)
 
 	fileout = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (fileout == -1)
-		return ;
+		write(1,"(null)",6) ;
 	dup2(fd[0], 0);
 	dup2(fileout, 1);
 	close(fd[1]);
