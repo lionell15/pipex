@@ -95,7 +95,7 @@ int main(void) {
 }
 ~~~
 
-## Función waitpdi.
+## Función waitpid.
 
 Prototipo: 	pid_t wait(int *status); 
 		pid_t waitpid(pid_t pid, int *status, int options); 
