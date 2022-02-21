@@ -42,7 +42,22 @@ Tanto argv como envp deben terminar en un puntero nulo. El vector de argumentos 
 
 Devuelve: La función execve no  regresa nada  en  caso  de  éxito,  y el código, datos, bss y la pila del proceso invocador se reescriben  con  los  correspondientes  del  programa  cargado.  El  programa invocado hereda el PID del proceso invocador y cualquier descriptor de fichero abierto que no se halla configurado para "cerrar en ejecución" (close on exec). Las señales pendientes del  proceso  invocador  se limpian. Cualquier señal capturada por el proceso invocador es devuelta a su comportamiento por defecto.  La señal SIGCHLD (cuando está puesta a SIG_IGN) puede o no puede ser reiniciada a SIG_DFL.
 En caso de error el valor devuelto es -1, y a la variable errno se le asigna un valor apropiado.
-
+~~~
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+    
+int main(void){
+    
+    char *argumentos[] = {"/bin/ls", "-l", NULL}; 
+    
+    execv("/bin/ls", argumentos);
+    
+    printf("Termino!!!");
+    
+    return EXIT_SUCCESS;
+}
+~~~
 
 ## Función fork.
 
@@ -52,6 +67,33 @@ Descripción: Fork  crea  un proceso hijo que difiere de su proceso padre sólo 
 En linux, fork está implementado usando páginas de copia-en-escritura (copy-on-write), así que la única penalización en que incurre fork es en el tiempo y  memoria  requeridos  para duplicar las tablas de páginas del padre, y para crear una única estructura de tarea (task structure) para el hijo.
 
 Devuelve: En caso de éxito, el PID del proceso hijo se devuelve en el padre y 0 en el hijo. En caso de falla, se devuelve -1 en el padre, no se crea ningún proceso hijo y errno se establece de manera adecuada.
+
+~~~
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main(void) {
+
+    pid_t c_pid = fork();
+    if (c_pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (c_pid == 0) {
+        printf("printed from child process - %d\n", getpid());
+        exit(EXIT_SUCCESS);
+    } else {
+        printf("printed from parent process - %d\n", getpid());
+        wait(NULL);
+    }
+
+    exit(EXIT_SUCCESS);
+}
+~~~
 
 ## Función waitpdi.
 
@@ -66,6 +108,47 @@ El waitpid toma tres argumentos, el primero de los cuales es el número de ident
 
 Devuelve: En caso de éxito, devuelve el ID de proceso del niño cuyo estado ha cambiado; si se especificó WNOHANG y existen uno o más elementos secundarios especificados por pid, pero aún no han cambiado de estado, se devuelve 0. En caso de error, se devuelve -1.
 
+~~~
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+pid_t spawnChild(const char* program, char** arg_list)
+{
+    pid_t ch_pid = fork();
+    if (ch_pid == -1) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (ch_pid > 0) {
+        printf("spawn child with pid - %d\n", ch_pid);
+        return ch_pid;
+    } else {
+        execvp(program, arg_list);
+        perror("execve");
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main(void) {
+    const char *args[] = { "top", NULL, NULL };
+
+    pid_t child;
+    int wstatus;
+
+    child = spawnChild("top", args);
+
+    if (waitpid(child, &wstatus, WUNTRACED | WCONTINUED) == -1) {
+        perror("waitpid");
+        exit(EXIT_FAILURE);
+    }
+
+    exit(EXIT_SUCCESS);
+}
+~~~
+
 ## Función pipe.
 
 Prototipo: int pipe(int pipefd[2]);
@@ -77,6 +160,44 @@ Observe que el padre escribe la cadena que se ha recuperado del argumento de la 
 
 Devuelve: En caso de éxito, se devuelve cero. En caso de error, se devuelve -1 y errno se establece correctamente.
 
+~~~
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void main(){
+
+     int fd[2];
+     char buffer[30];
+     pid_t pid;
+
+     //#include<unistd.h>
+     // int pipe(int fd[2]);
+     // fd[0] contiene el descriptor para lectura
+
+     pipe(fd); // Se crea el PIPE
+     pid = fork();
+
+     switch(pid){
+     
+          case -1: // Error
+                printf("No se ha podido crear un hijo \n");
+                exit(-1);
+                break;
+          case 0: // Hijo
+                close(fd[0]); // Cierra el descriptor que no va a usar. El de lectura
+                printf("El hijo escribe en el PIPE... \n");
+                write(fd[1], "Hola papi", 10);
+                break;
+          default: // Padre
+                close(fd[1]); // Cierra el descriptor de escritura
+                wait(NULL); // Espera a que finalice el hijo
+                printf("El padre lee el PIPE \n");
+                read(fd[0], buffer, 10);
+                printf("\t Mensaje leido: %s \n", buffer);
+     }
+
+~~~
 
 ## Función dup2.
 
