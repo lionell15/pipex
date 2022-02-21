@@ -13,10 +13,11 @@ Ej: si se desea verificar si es posible leer y ejecutar usa access(filepath, R_O
 Devuelve: 0 en caso de exito y -1 en caso de error y se establece errno.
 
 Ej:
+~~~
 #include <unistd.h>
 #include <stdio.h>
 
-int		main(void)
+int	main(void)
 {
     printf("**** F_OK ***\n");
     printf("F_OK not existing file : %d\n", access("not_access_test.txt", F_OK));
@@ -28,7 +29,7 @@ int		main(void)
     printf("W_OK %d\n", access("access_test.txt", W_OK));
     printf("X_OK %d\n", access("access_test.txt", X_OK));
 }
-
+~~~
 
 ## Funcion execve.
 
@@ -55,8 +56,8 @@ Devuelve: En caso de éxito, el PID del proceso hijo se devuelve en el padre y 0
 ## Función waitpdi.
 
 Prototipo: 	pid_t wait(int *status); 
-			pid_t waitpid(pid_t pid, int *status, int options); 
-			int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
+		pid_t waitpid(pid_t pid, int *status, int options); 
+		int waitid(idtype_t idtype, id_t id, siginfo_t *infop, int options);
 
 Descripción: En los sistemas basados en Unix, existe una noción de proceso que es simplemente una instancia en ejecución de un programa. El proceso puede crear otros procesos usando la llamada al sistema fork y ejecutar la porción dada del código. Tenga en cuenta que, para este tema, las llamadas al sistema son servicios del sistema operativo que se proporcionan al usuario como funciones de estilo C. Generalmente, en muchos escenarios, se requiere un programa para monitorear los procesos que creó llamados hijos. La familia de funciones wait es la que proporciona esta funcionalidad, y waitpid es una de ellas.
 La llamada del sistema wait tiene múltiples limitaciones y, para cubrir funciones más avanzadas, es necesario utilizar la función waitpid. Es decir, si un proceso crea varios hijos y el padre necesita supervisar a un hijo específico, solo waitpid puede hacer esto. En el siguiente ejemplo, implementamos una función llamada spawnChild que crea un nuevo proceso hijo y ejecuta un programa diferente. En aras de una buena demostración del ejemplo, estamos ejecutando un programa top (disponible en casi todos los sistemas basados ​​en Unix) que se está ejecutando hasta que el usuario lo termina. Una vez que la función regresa al proceso padre, almacenamos un ID de proceso hijo y lo pasamos a la función waitpid para monitorear el estado.
@@ -87,6 +88,7 @@ Cada programa en ejecución tiene tres descriptores de archivo abiertos por defe
 Devuelve: Una vez completado con éxito, se devolverá un número entero no negativo, a saber, el descriptor del archivo; de lo contrario, se devolverá -1 y se establecerá errno para indicar el error.
 
 Ej:
+~~~
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -103,5 +105,6 @@ int main(void) {
 
     exit(EXIT_SUCCESS);
 }
+~~~
 Resultado: tmp.txt fd = 3
 
