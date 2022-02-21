@@ -12,7 +12,7 @@ all: 		${NAME}
 
 ${NAME}:	${OBJS}
 					@make re -C ./libft
-					@$(CC) ${OBJS} -Llibft -lft -o ${NAME}
+					@$(CC) ${CFLAGS}  ${OBJS} -Llibft -lft -o ${NAME}
 clean:
 					@make clean -C ./libft
 					@rm -f ${OBJS} ${OBJS_B}

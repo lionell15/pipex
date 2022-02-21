@@ -1,4 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lespinoz <lespinoz@student.42barcel>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/21 13:55:51 by lespinoz          #+#    #+#             */
+/*   Updated: 2022/02/21 13:55:54 by lespinoz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
+
+void	error(void)
+{
+	perror("Error");
+	exit(EXIT_FAILURE);
+}
 
 char	*find_path(char *cmd, char **envp)
 {
@@ -43,8 +61,9 @@ void	execute(char *argv, char **envp)
 		while (cmd[++i])
 			free(cmd[i]);
 		free(cmd);
-		return ;
+		perror("Error:");
+		exit(127);
 	}
 	if (execve(path, cmd, envp) == -1)
-		write(1, "Error!", 6);
+		error();
 }
