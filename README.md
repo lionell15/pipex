@@ -52,7 +52,7 @@ En linux, fork está implementado usando páginas de copia-en-escritura (copy-on
 
 Devuelve: En caso de éxito, el PID del proceso hijo se devuelve en el padre y 0 en el hijo. En caso de falla, se devuelve -1 en el padre, no se crea ningún proceso hijo y errno se establece de manera adecuada.
 
-##Función waitpdi.
+## Función waitpdi.
 
 Prototipo: 	pid_t wait(int *status); 
 			pid_t waitpid(pid_t pid, int *status, int options); 
@@ -65,7 +65,7 @@ El waitpid toma tres argumentos, el primero de los cuales es el número de ident
 
 Devuelve: En caso de éxito, devuelve el ID de proceso del niño cuyo estado ha cambiado; si se especificó WNOHANG y existen uno o más elementos secundarios especificados por pid, pero aún no han cambiado de estado, se devuelve 0. En caso de error, se devuelve -1.
 
-##Función pipe.
+## Función pipe.
 
 Prototipo: int pipe(int pipefd[2]);
 
